@@ -135,15 +135,12 @@ public abstract class BoardView extends ScrollView implements IBoardListener {
 
     /** Configures the view to handle case interactions */
     protected void setCasePickable() {
-        CaseBoard caseBoard = (CaseBoard) board;
-        Board baseBoard = caseBoard.getBaseBoard();
-
         for (ElementView elementView : elementViews) {
             PuzzleElement puzzleElement =
-                    baseBoard.getPuzzleElement(elementView.getPuzzleElement());
+                    board.getPuzzleElement(elementView.getPuzzleElement());
             elementView.setPuzzleElement(puzzleElement);
             elementView.setShowCasePicker(true);
-            elementView.setCaseRulePickable(caseBoard.isPickable(puzzleElement, null));
+            elementView.setCaseRulePickable(board.isPickable(puzzleElement, null));
         }
     }
 
@@ -165,7 +162,7 @@ public abstract class BoardView extends ScrollView implements IBoardListener {
      * @param caseBoard case board to be added
      */
     @Override
-    public void onCaseBoardAdded(@NotNull CaseBoard caseBoard) {
+    public void onCaseBoardAdded(@NotNull Board caseBoard) {
         setBoard(caseBoard);
         repaint();
     }

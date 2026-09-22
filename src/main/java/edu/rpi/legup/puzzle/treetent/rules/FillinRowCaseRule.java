@@ -1,7 +1,6 @@
 package edu.rpi.legup.puzzle.treetent.rules;
 
 import edu.rpi.legup.model.gameboard.Board;
-import edu.rpi.legup.model.gameboard.CaseBoard;
 import edu.rpi.legup.model.gameboard.PuzzleElement;
 import edu.rpi.legup.model.rules.CaseRule;
 import edu.rpi.legup.model.tree.TreeTransition;
@@ -29,10 +28,11 @@ public class FillinRowCaseRule extends CaseRule {
      * @return the case board object
      */
     @Override
-    public CaseBoard getApplicableLocationsBoard(Board board) {
+    public Board getApplicableLocationsBoard(Board board) {
         TreeTentBoard treeTentBoard = (TreeTentBoard) board.copy();
         treeTentBoard.setModifiable(false);
-        CaseBoard caseBoard = new CaseBoard(treeTentBoard, this);
+        treeTentBoard.setCaseRule(this);
+
         ArrayList<TreeTentClue> clues = treeTentBoard.getRowClues();
         clues.addAll(treeTentBoard.getColClues());
         for (PuzzleElement element : clues) {
@@ -46,9 +46,9 @@ public class FillinRowCaseRule extends CaseRule {
             // false).size() != 0)) {
             //     caseBoard.addPickableElement(element);
             // }
-            caseBoard.addPickableElement(element);
+            treeTentBoard.addPickableElement(element);
         }
-        return caseBoard;
+        return treeTentBoard;
     }
 
     /**
