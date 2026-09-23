@@ -3,7 +3,6 @@ package edu.rpi.legup.ui.boardview;
 import edu.rpi.legup.controller.BoardController;
 import edu.rpi.legup.controller.ElementController;
 import edu.rpi.legup.model.gameboard.Board;
-import edu.rpi.legup.model.gameboard.CaseBoard;
 import edu.rpi.legup.model.gameboard.PuzzleElement;
 import edu.rpi.legup.model.observer.IBoardListener;
 import edu.rpi.legup.model.tree.TreeElement;
@@ -121,7 +120,7 @@ public abstract class BoardView extends ScrollView implements IBoardListener {
         if (this.board != board) {
             this.board = board;
 
-            if (board instanceof CaseBoard) {
+            if (board.getCaseRule() != null) {
                 setCasePickable();
             } else {
                 for (ElementView elementView : elementViews) {

@@ -65,7 +65,7 @@ public class TreeTentController extends ElementController {
             TreeViewSelection selection = treeView.getSelection();
 
             if (dragStart != null) {
-                if (board != null) {
+                if (board.getCaseRule() != null) {
                     AutoCaseRuleCommand autoCaseRuleCommand =
                             new AutoCaseRuleCommand(
                                     dragStart, selection, board.getCaseRule(), board, e);

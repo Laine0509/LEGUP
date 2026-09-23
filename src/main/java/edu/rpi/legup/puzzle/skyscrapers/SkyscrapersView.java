@@ -136,7 +136,7 @@ public class SkyscrapersView extends GridBoardView {
         if (this.board != board) {
             this.board = board;
 
-            if (board != null) {
+            if (board.getCaseRule() != null) {
                 setCasePickable();
             } else {
                 for (ElementView elementView : elementViews) {

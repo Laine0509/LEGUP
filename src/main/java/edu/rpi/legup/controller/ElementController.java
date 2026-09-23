@@ -162,10 +162,10 @@ public class ElementController
         }
         // funny
         if (elementView != null) {
-            if (board != null) {
+            if (board.getCaseRule() != null) {
                 AutoCaseRuleCommand autoCaseRuleCommand =
                         new AutoCaseRuleCommand(
-                                elementView, selection, ((Board) board).getCaseRule(), (Board) board, e);
+                                elementView, selection, board.getCaseRule(), board, e);
                 if (autoCaseRuleCommand.canExecute()) {
                     autoCaseRuleCommand.execute();
                     getInstance().getHistory().pushChange(autoCaseRuleCommand);
@@ -496,9 +496,9 @@ public class ElementController
             boardView = getInstance().getLegupUI().getEditorBoardView();
         }
         Board board = boardView.getBoard();
-        if (board != null) {
+        if (board.getCaseRule() != null) {
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                puzzle.notifyBoardListeners(listener -> listener.onCaseBoardAdded((Board) board));
+                puzzle.notifyBoardListeners(listener -> listener.onCaseBoardAdded(board));
             }
         }
     }
