@@ -21,6 +21,7 @@ import edu.rpi.legup.model.tree.TreeElement;
 import edu.rpi.legup.save.ExportFileException;
 import edu.rpi.legup.save.InvalidFileFormatException;
 import edu.rpi.legup.ui.boardview.BoardView;
+import edu.rpi.legup.ui.proofeditorui.rulesview.RuleFrame;
 import edu.rpi.legup.ui.puzzleeditorui.elementsview.ElementFrame;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,6 +34,7 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.DefaultCaret;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +54,7 @@ public class PuzzleEditorPanel extends LegupPanel implements IHistoryListener {
     private JToolBar toolBar1;
     private JToolBar toolBar2;
     private JFrame frame;
+    private RuleFrame ruleFrame;
     private JButton[] buttons;
     JSplitPane splitPanel;
     private JButton[] toolBar1Buttons;
@@ -119,19 +122,17 @@ public class PuzzleEditorPanel extends LegupPanel implements IHistoryListener {
         // Use a multi-line, wrapped, non-editable JTextArea so
         // longer goal descriptions wrap and look consistent with the solver UI.
         goalText = new JTextArea();
-        goalText.setRows(2);
+        goalText.setRows(1);
         goalText.setEditable(false);
         // Make opaque so it renders reliably inside the scroll pane
         goalText.setOpaque(true);
-        // Show a default message so the box is visible before a puzzle is loaded
-        goalText.setText("Find all solutions to the puzzle or prove none exist.");
-        // Use the panel background so it blends with the UI and remains readable
-        goalText.setBackground(UIManager.getColor("Panel.background"));
         goalText.setFocusable(false);
         goalText.setLineWrap(true);
         goalText.setWrapStyleWord(true);
+        // Stop caret (and scroll pane) from jumping to bottom of text area when updated
+        ((DefaultCaret) goalText.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         // Create and store the scroll pane on the field so it can be reused
-        goalPane = new JScrollPane(goalText);
+        goalPane = new JitterlessScrollPane(goalText);
         // Give the pane a small preferred height so it doesn't collapse in the layout
         goalPane.setPreferredSize(new Dimension(0, 50));
         // Also set a minimum size and reasonable max height to prevent layout collapsing
@@ -216,9 +217,20 @@ public class PuzzleEditorPanel extends LegupPanel implements IHistoryListener {
         } else {
             exit.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
         }
+
+        // Implements the "Preferences" under "File"
+        JMenuItem preferences = new JMenuItem("Preferences");
+        preferences.addActionListener(
+                a -> {
+                    PreferencesDialog.CreateDialogForProofEditor(this.frame, this.ruleFrame);
+                });
+
         menus[0].add(openPuzzle);
         menus[0].add(createPuzzle);
         // menus[0].add(directSavePuzzle);
+        menus[0].addSeparator();
+        menus[0].add(preferences);
+        menus[0].addSeparator();
         menus[0].add(exit);
 
         // EDIT
