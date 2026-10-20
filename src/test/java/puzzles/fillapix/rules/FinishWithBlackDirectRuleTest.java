@@ -8,7 +8,6 @@ import edu.rpi.legup.puzzle.fillapix.FillapixCell;
 import edu.rpi.legup.puzzle.fillapix.FillapixCellType;
 import edu.rpi.legup.puzzle.fillapix.rules.FinishWithBlackDirectRule;
 import edu.rpi.legup.save.InvalidFileFormatException;
-import java.awt.*;
 import legup.MockGameBoardFacade;
 import legup.TestUtilities;
 import org.junit.Assert;
@@ -26,38 +25,91 @@ public class FinishWithBlackDirectRuleTest {
     }
 
     /**
-     * Tests the Finish With Black Direct Rule for a value square that needs 9 black squares where it's surrounded
-     * by black squares and the value square is colored black in the middle of the 3x3 board.
+     * Tests the Finish With Black Direct Rule on a 1x1 board.
+     * The only square is a value square of 1. It is colored black.
      */
     @Test
-    public void FinishWithBlackDirectRuleTest_3x3FillBlackTest() throws InvalidFileFormatException {
+    public void FinishWithBlackDirectRuleTest_1x1Center1FillBlackTest() throws InvalidFileFormatException {
         TestUtilities.importTestBoard(
-                "puzzles/fillapix.rules/FinishWithBlackDirectRule/3x3FillBlack", fillapix );
+                "puzzles/fillapix/rules/FinishWithBlackDirectRuleTest/1x1Center1FillBlack", fillapix );
         TreeNode rootNode = fillapix.getTree().getRootNode();
-        TreeTransition transition = rootNode.getChildren().get(0);
+        TreeTransition transition = rootNode.getChildren().getFirst();
+        transition.setRule(RULE);
+
+        FillapixBoard board = (FillapixBoard) transition.getBoard(); // Reset Board
+
+        // go through the 1 cell of the board
+        FillapixCell cell = board.getCell(0, 0); // set the current cell
+        Assert.assertNotNull(cell);
+
+        cell.setCellType(FillapixCellType.BLACK); // 1: BLACK
+        board.addModifiedData(cell);
+
+        // Test once gone through entire board
+        Assert.assertNull(RULE.checkRule(transition));
+    }
+
+    /**
+     * Tests the Finish With Black Direct Rule on a 3x3 board.
+     * There is a value square of 9 in the center. All squares, including the value square, are colored black.
+     */
+    @Test
+    public void FinishWithBlackDirectRuleTest_3x3Center9FillBlackTest() throws InvalidFileFormatException {
+        TestUtilities.importTestBoard(
+                "puzzles/fillapix/rules/FinishWithBlackDirectRuleTest/3x3Center9FillBlack", fillapix );
+        TreeNode rootNode = fillapix.getTree().getRootNode();
+        TreeTransition transition = rootNode.getChildren().getFirst();
         transition.setRule(RULE);
 
         FillapixBoard board = (FillapixBoard) transition.getBoard(); // Reset Board
         // loop through all cells within the board
         for ( int i = 0; i < 3; i++ ) {
-            for (int j = 0; j < 3; j++) {
+            for ( int j = 0; j < 3; j++ ) {
                 FillapixCell cell = board.getCell(i, j); // set the current cell
                 Assert.assertNotNull(cell);
 
                 cell.setCellType(FillapixCellType.BLACK); // 1: BLACK
                 board.addModifiedData(cell);
-
-                // Test it at final row and col
-//                if ( i == 2 && j == 2 ) {
-//                    Assert.assertNull(RULE.checkRule(transition));
-//                }
-//                else {
-//                    Assert.assertNotNull(RULE.checkRule(transition));
-//                }
             }
         }
 
         // Test once gone through entire board
         Assert.assertNull(RULE.checkRule(transition));
+    }
+
+    /**
+     * Tests a false application of the Finish With Black Direct Rule on a 3x3 board.
+     * There is a value square of 6 in the center. The Middle and Right columns are colored black, and the
+     * Left column is colored white.
+     */
+    @Test
+    public void FinishWithBlackDirectRuleTest_3x3Center6BlackMidRSideTest() throws InvalidFileFormatException {
+        TestUtilities.importTestBoard(
+                "puzzles/fillapix/rules/FinishWithBlackDirectRuleTest/3x3Center6BlackMidRSide", fillapix );
+        TreeNode rootNode = fillapix.getTree().getRootNode();
+        TreeTransition transition = rootNode.getChildren().getFirst();
+        transition.setRule(RULE);
+
+        FillapixBoard board = (FillapixBoard) transition.getBoard(); // Reset Board
+        // loop through all cells within the board.
+        for ( int i = 0; i < 3; i++ ) {
+            for ( int j = 0; j < 3; j++ ) {
+                FillapixCell cell = board.getCell(i, j); // set the current cell
+                Assert.assertNotNull(cell);
+
+                // set everything but first column to black
+                if ( j == 0 ) {
+                    cell.setCellType(FillapixCellType.WHITE); // 2: WHITE
+                }
+                else {
+                    cell.setCellType(FillapixCellType.BLACK); // 1: BLACK
+                }
+
+                board.addModifiedData(cell);
+            }
+        }
+
+        // Test once gone through entire board
+        Assert.assertNotNull(RULE.checkRule(transition));
     }
 }
