@@ -78,6 +78,35 @@ public class FinishWithBlackDirectRuleTest {
     }
 
     /**
+     * Tests the Finish With Black Direct Rule on a 2x2 board.
+     * There are 2 value squares: A 4-value in the top left and 4-value in the bottom right.
+     * All squares are colored black.
+     */
+    @Test
+    public void FinishWithBlackDirectRuleTest_2x2MultiNumberTest() throws InvalidFileFormatException {
+        TestUtilities.importTestBoard(
+                "puzzles/fillapix/rules/FinishWithBlackDirectRuleTest/2x2MultiNumber", fillapix );
+        TreeNode rootNode = fillapix.getTree().getRootNode();
+        TreeTransition transition = rootNode.getChildren().getFirst();
+        transition.setRule(RULE);
+
+        FillapixBoard board = (FillapixBoard) transition.getBoard(); // Reset Board
+        // loop through all cells within the board. i = x, j = y
+        for ( int i = 0; i < 2; i++ ) {
+            for ( int j = 0; j < 2; j++ ) {
+                FillapixCell cell = board.getCell(i, j); // set the current cell
+                Assert.assertNotNull(cell);
+
+                cell.setCellType(FillapixCellType.BLACK); // 1: BLACK
+                board.addModifiedData(cell);
+            }
+        }
+
+        // Test once gone through entire board
+        Assert.assertNull(RULE.checkRule(transition));
+    }
+
+    /**
      * Tests a false application of the Finish With Black Direct Rule on a 3x3 board.
      * There is a value square of 6 in the center. The Middle and Right columns are colored black, and the
      * Left column is colored white.
